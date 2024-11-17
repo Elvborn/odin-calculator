@@ -4,18 +4,32 @@ const buttons = document.querySelectorAll(".button");
 const display = document.querySelector("#display");
 
 function operate(num1, num2, op){
+    num1 = Number(num1);
+    num2 = Number(num2);
+
+    let result;
+
     switch(op){
         case("+"):
-            return num1 + num2;
+            result = num1 + num2;
+            break;
         case("-"):
-            return num1 - num2;
+            result = num1 - num2;
+            break;
         case("*"):
-            return num1 * num2;
+            result = num1 * num2;
+            break;
         case("/"):
-            return num1 / num2;
+            if(num1 === 0 || num2 === 0)
+                return "Division Error!"
+
+            result = num1 / num2;
+            break;
         default:
             return "ERROR";
     }
+
+    return Math.round(result * 100000) / 100000;
 }
 
 function eval(){
@@ -43,8 +57,16 @@ buttons.forEach(btn => {
     btn.addEventListener("click", () => {
         btnClasses = Array.from(btn.classList); 
         
-        if(btnClasses.includes("operator"))
+        if(btnClasses.includes("operator")){
+            if(firstNumber && secondNumber){
+                firstNumber = operate(firstNumber, secondNumber, operator);
+                secondNumber = undefined;
+                operator = btn.textContent;
+            }
+
             if(firstNumber) operator = btn.textContent;
+        }
+            
 
         if(btnClasses.includes("number")){
             if(!operator)
@@ -57,7 +79,8 @@ buttons.forEach(btn => {
             reset();
 
         if(btnClasses.includes("eval")){
-            eval();
+            if(firstNumber && secondNumber)
+                eval();
             return;
         }
         
